@@ -146,7 +146,6 @@ Due to Python's slow speed, this approach doesn't pass all test cases.
 
 </Info>
 
-
 ```py
 # S(n) = 1+2+...+n = n*(n+1)/2
 def S(n: int) -> int:
@@ -203,13 +202,15 @@ with open("race.out", "w") as fout:
 	for x in X:
 		print(solve(k, x), file=fout)
 ```
+
 </PySection>
 </LanguageSection>
 </Spoiler>
 
 <Spoiler title="Hint 1">
 
-What's the best strategy that Bessie could use if, hypothetically, there wasn't a speed limit at the finish line?
+What's the best strategy that Bessie could use if, hypothetically, there wasn't
+a speed limit at the finish line?
 
 </Spoiler>
 
@@ -227,8 +228,9 @@ How can we use this strategy when there **is** a speed limit?
 
 <Spoiler title="Answer to Hint 2">
 
-We'll have Bessie continuously speed up until she's forced to slow down because of the speed limit.
-This strategy works because we've observed that when possible, Bessie should always speed up!
+We'll have Bessie continuously speed up until she's forced to slow down because
+of the speed limit. This strategy works because we've observed that when
+possible, Bessie should always speed up!
 
 This is an example of a [greedy algorithm](/bronze/intro-greedy).
 
@@ -332,5 +334,48 @@ class Race {
 ```
 
 </JavaSection>
+<PySection>
+
+```py
+with open(r"race.in") as I:
+    K, N = [int(x) for x in I.readline().split()]
+    Xs = []
+    for _ in range(N):
+        Xs.append(int(I.readline()))
+
+
+output = []
+for X in Xs:
+	# Greedy Algorithm was too slow.
+	# Binary search ... but no upper bound
+    l = 0
+    r = X
+    out = float("inf")
+    while r != l:
+        if r > X:
+			# remaining_distance is the distance left between acceleration and deceleration
+            remaining_distance = K - ((r + 1) * r / 2 + (r + X - 1) * (r - X) / 2)
+            if remaining_distance < 0:
+                r = (r - l) // 2 + l
+                continue
+            time = -(-remaining_distance // r) + r + (r - X)  # Funny way to do ceiling
+        else:
+            remaining_distance = K - (r + 1) * r / 2
+            if remaining_distance < 0:
+                r = (r - l) // 2 + l
+                continue
+            time = -(-remaining_distance // r) + r
+        out = min(out, time)
+        l = r
+        r = 2*r
+    output.append(int(out))
+
+with open(r"race.out",mode="w") as O:
+    for out in output:
+        O.write(str(out)+"\n")
+
+```
+
+</PySection>
 </LanguageSection>
 </Spoiler>
